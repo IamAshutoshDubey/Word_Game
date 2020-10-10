@@ -13,3 +13,4 @@ WordGameTests:
   - UIKit
   - RxSwift
   - RxRelay
+  - RxCocoa

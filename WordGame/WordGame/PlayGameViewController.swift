@@ -50,7 +50,7 @@ class PlayGameViewController: UIViewController {
     
     private func setupBinding() {
         
-        viewModel.setupBinding(correctObervable: correctButton.rx.tap.asObservable(), wrongObervable: wrongButton.rx.tap.asObservable())
+        viewModel.setupBinding(correctTrigger: correctButton.rx.tap.asDriver(), wrongTrigger: wrongButton.rx.tap.asDriver())
         
         viewModel.liveCorrectAttempts.distinctUntilChanged()
             .observeOn(MainScheduler.instance)
