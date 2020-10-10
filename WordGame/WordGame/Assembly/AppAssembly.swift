@@ -32,7 +32,12 @@ class AppAssembly: Assembly {
         
         container.register(PlayGameViewModel.self) { resolver in
             let game = resolver.resolve(GameType.self)!
-            return PlayGameViewModel(game: game)
+            let router = resolver.resolve(AppRouterType.self)!
+            return PlayGameViewModel(game: game, router: router)
+        }
+        
+        container.register(GameOverViewModel.self) { resolver in
+            return GameOverViewModel()
         }
         
     }

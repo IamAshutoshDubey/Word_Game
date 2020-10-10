@@ -22,18 +22,12 @@ struct WordsLoader: WordsLoaderType {
             do {
                 let data = try Data(contentsOf: url)
                 let wordList = try JSONDecoder().decode([Word].self, from: data)
-                return wordList.isEmpty ? .error(LoaderError.noElements) : .just(wordList)
+                return wordList.isEmpty ? .error(AppError.noElements) : .just(wordList)
             } catch {
-                return .error(LoaderError.decoreError)
+                return .error(AppError.decoreError)
             }
         } else {
-            return .error(LoaderError.fileNotFound)
+            return .error(AppError.fileNotFound)
         }
     }
-}
-
-enum LoaderError: Error {
-    case decoreError
-    case noElements
-    case fileNotFound
 }

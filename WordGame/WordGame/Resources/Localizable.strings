@@ -8,5 +8,7 @@
 "error_title" = "Oops!";
 "unable_to_start_game_error" = "Uanble to Start Game.";
 "play_button_title" = "Lets Play";
+"game_over_lable" = "Game Over";
+"well_done_lable" = "Well Done!";
 
 

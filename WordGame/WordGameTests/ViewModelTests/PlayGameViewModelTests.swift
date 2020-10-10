@@ -15,17 +15,20 @@ class PlayGameViewModelTests: XCTestCase {
 
     var sut: PlayGameViewModel!
     var mockedGame: GameTypeMock!
+    var router: AppRouterTypeMock!
     
     private var bag: DisposeBag!
     private var correctObervable: PublishSubject<Void>!
     private var wrongObervable:  PublishSubject<Void>!
     private var playObervable:  PublishSubject<Void>!
+    private var gameOverSubject: PublishSubject<Bool>!
 
 
     override func setUpWithError() throws {
         bag = DisposeBag()
         mockedGame = GameTypeMock()
-        sut = PlayGameViewModel(game: mockedGame)
+        router = AppRouterTypeMock()
+        sut = PlayGameViewModel(game: mockedGame, router: router)
         correctObervable = PublishSubject<Void>()
         wrongObervable =  PublishSubject<Void>()
         playObervable =  PublishSubject<Void>()
@@ -33,10 +36,14 @@ class PlayGameViewModelTests: XCTestCase {
                      wrongTrigger: wrongObervable.asObservable(),
                      playTrigger: playObervable.asObservable())
         
+        gameOverSubject =  PublishSubject<Bool>()
+        
         mockedGame.given(.questionObservable(getter: PublishSubject<AttemptQuestion?>().asObservable()))
         mockedGame.given(.liveScoreObservable(getter: PublishSubject<LiveScore>().asObservable()))
-        mockedGame.given(.userResponseObservable(getter:  PublishSubject<UserResponse>()))
-        sut.setupBinding(input: inputTrigger)
+        mockedGame.given(.userResponseObservable(getter: PublishSubject<UserResponse>()))
+        mockedGame.given(.gameOverObservable(getter: gameOverSubject.asObservable()))
+
+        sut.setupBinding(input: inputTrigger, source: ViewControllerTypeMock())
     }
 
     override func tearDownWithError() throws {
@@ -46,7 +53,7 @@ class PlayGameViewModelTests: XCTestCase {
     }
     
     func testStartGame() {
-        mockedGame.given(.startGame(willReturn: Single.just(())))
+        mockedGame.given(.startGame(.any, willReturn: Single.just(())))
         let exp = expectation(description: "Play Game")
         sut.gameStartSubject.subscribe(onNext: { status in
             if status {
@@ -84,5 +91,10 @@ class PlayGameViewModelTests: XCTestCase {
         waitForExpectations(timeout: 10) {
             if $0 != nil { XCTFail("Expectation not fulfilled") }
         }
+    }
+    
+    func testGameOver() {
+        gameOverSubject.onNext(true)
+        router.verify(.naviagteToGameOverScreen(source: .any, isGameOver: .any), count: 1)
     }
 }

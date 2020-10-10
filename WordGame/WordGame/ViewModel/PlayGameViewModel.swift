@@ -16,22 +16,26 @@ struct InputTrigger {
 }
 
 class PlayGameViewModel {
-    let game: GameType
+    private let game: GameType
+    private let router: AppRouterType
     
     private let disposeBag = DisposeBag()
     private var input: InputTrigger!
+    private var source: ViewControllerType!
     let attmept = PublishSubject<(String,String)>()
     let liveCorrectAttempts = PublishSubject<(Int)>()
     let liveWrongAttempts = PublishSubject<(Int)>()
     
     let gameStartSubject = PublishSubject<(Bool)>()
     
-    init(game: GameType) {
+    init(game: GameType, router: AppRouterType) {
         self.game = game
+        self.router = router
     }
         
-    func setupBinding(input: InputTrigger) {
+    func setupBinding(input: InputTrigger, source: ViewControllerType) {
         self.input = input
+        self.source = source
         input.playTrigger.subscribe(onNext: { [weak self] in
             self?.startGame()
         }).disposed(by: disposeBag)
@@ -51,10 +55,19 @@ class PlayGameViewModel {
                 self?.liveCorrectAttempts.onNext(score.correctAttempts)
                 self?.liveWrongAttempts.onNext(score.wrongAttempts)
             }).disposed(by: disposeBag)
+        
+        game.gameOverObservable.observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] isGameOver in
+                self?.gameOver(source, isGameOver: isGameOver)
+            }).disposed(by: disposeBag)
+    }
+    
+    private func gameOver(_ source: ViewControllerType, isGameOver: Bool) {
+        router.naviagteToGameOverScreen(source: source, isGameOver: isGameOver)
     }
         
     private func startGame() {
-        game.startGame().observeOn(MainScheduler.instance)
+        game.startGame(.difficult).observeOn(MainScheduler.instance)
             .subscribe(onSuccess: { [weak self] _ in
                 self?.gameStartSubject.onNext(true)
         }, onError: { [weak self] _ in

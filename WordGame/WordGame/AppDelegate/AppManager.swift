@@ -9,6 +9,14 @@ import Foundation
 import Swinject
 
 
+enum AppError: Error {
+    case decoreError
+    case noElements
+    case fileNotFound
+    case generic
+}
+
+
 class AppManager {
     static let shared = AppManager()
 

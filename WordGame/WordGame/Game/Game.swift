@@ -14,22 +14,31 @@ protocol GameType {
     var liveScoreObservable: Observable<LiveScore> {get}
     var questionObservable: Observable<AttemptQuestion?> {get}
     var userResponseObservable: PublishSubject<UserResponse> {get}
-    func startGame() -> Single<Void>
+    var gameOverObservable: Observable<Bool> {get}
+    func startGame(_ mode: GameMode) -> Single<Void>
 }
 
 class Game: GameType {
     
-    private let correctPercentage = 25
+    private let correctPercentage = 25.0
+    private let maxWordPairs = 15
+    private let maxFailedAttempt = 3
+    private let timeoutTime: TimeInterval = 5
+    
     
     var liveScoreObservable: Observable<LiveScore> {liveScore.asObservable()}
     var questionObservable: Observable<AttemptQuestion?> {currentQuestion.asObservable()}
     var userResponseObservable = PublishSubject<UserResponse>()
+    var gameOverObservable: Observable<Bool> {gameOverSubject.asObservable()}
     
     private let liveScore = BehaviorRelay<LiveScore>(value: LiveScore(correctAttempts: 0, wrongAttempts: 0))
     private let currentQuestion = BehaviorRelay<AttemptQuestion?>(value: nil)
     private let startGameSubject = PublishSubject<Bool>()
     private var allWordPair: [WordPair]!
     private var currentWordPairCount = 0
+    private var gameOverSubject = PublishSubject<Bool>()
+    private var gameMode: GameMode = .difficult
+    private var timer: Timer!
     
     private let disposeBag = DisposeBag()
     
@@ -39,19 +48,24 @@ class Game: GameType {
         self.wordsProvider = wordsProvider
     }
     
-    func startGame() -> Single<Void> {
+    func startGame(_ mode: GameMode) -> Single<Void> {
+        gameMode = mode
         return wordsProvider.fetchWords().subscribeOn(ConcurrentDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
             .flatMap { [weak self] success -> Single<Void> in
-            self?.allWordPair = self?.wordsProvider.getWordPairs(correctPercentage: 25)
-            self?.play()
-            return Single.just(())
-        }
+                guard let weakSelf = self else { return .error(AppError.generic) }
+                weakSelf.allWordPair = weakSelf.fetchWordPairs()
+                weakSelf.play()
+                return Single.just(())
+            }
     }
     
     private func play() {
         userResponseObservable.subscribe(onNext: { [weak self] response in
             guard let weakSelf = self else { return }
+            DispatchQueue.main.async {
+                weakSelf.timer?.invalidate()
+            }
             let wordPair =  weakSelf.allWordPair[weakSelf.currentWordPairCount]
             var score = weakSelf.liveScore.value
             if response == .correct {
@@ -67,9 +81,8 @@ class Game: GameType {
                     score.wrongAttempts += 1
                 }
             }
-            weakSelf.liveScore.accept(score)
-            weakSelf.currentWordPairCount += 1
-            weakSelf.nextQuestion()
+            weakSelf.processLiveScore(score: score)
+            
         }).disposed(by: disposeBag)
         
         if currentWordPairCount == 0 {
@@ -78,13 +91,54 @@ class Game: GameType {
     }
     
     private func nextQuestion() {
-        if currentWordPairCount == allWordPair.count {
-            currentWordPairCount = 0
-            allWordPair = wordsProvider.getWordPairs(correctPercentage: 25)
-        }
         let wordpair =  allWordPair[currentWordPairCount]
         currentQuestion.accept(AttemptQuestion(questionWord: wordpair.questionWord, answerWord: wordpair.answerWord))
+        if gameMode == .difficult {
+            DispatchQueue.main.async {
+                self.timer?.invalidate()
+                self.timer = Timer(timeInterval: self.timeoutTime, repeats: false) { [weak self] _ in
+                    self?.userResponseObservable.dispose()
+                    self?.gameOverSubject.onNext((true))
+                }
+                RunLoop.current.add(self.timer, forMode: RunLoop.Mode.common)
+            }
+        }
     }
+    
+    private func processLiveScore(score: LiveScore) {
+        currentWordPairCount += 1
+        switch gameMode {
+        case .difficult:
+            if score.wrongAttempts == maxFailedAttempt {
+                gameOverSubject.onNext((true))
+            } else if currentWordPairCount == maxWordPairs {
+                gameOverSubject.onNext((false))
+            } else {
+                liveScore.accept(score)
+                nextQuestion()
+            }
+        case .easy:
+            if currentWordPairCount == allWordPair.count {
+                currentWordPairCount = 0
+                allWordPair = fetchWordPairs()
+            }
+            liveScore.accept(score)
+            nextQuestion()
+        }
+    }
+    
+    private func fetchWordPairs() -> [WordPair] {
+        if gameMode == .easy {
+            return wordsProvider.getWordPairs(correctPercentage)
+        } else {
+            return wordsProvider.getWordPairs(maxWordPairs, correctPercentage)
+        }
+    }
+}
+
+enum GameMode {
+    case difficult
+    case easy
 }
 
 

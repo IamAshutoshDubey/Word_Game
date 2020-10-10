@@ -48,7 +48,7 @@ class WordsProviderTests: XCTestCase {
     
     func testFetchWordsError() {
         let exp = expectation(description: "Fetch Words response")
-        wordLoader.given(.loadWords(willReturn: .error(LoaderError.decoreError)))
+        wordLoader.given(.loadWords(willReturn: .error(AppError.decoreError)))
         
         sut.fetchWords().subscribe(onError: { error in
                 exp.fulfill()
@@ -65,7 +65,7 @@ class WordsProviderTests: XCTestCase {
         
         sut.fetchWords().subscribe(onSuccess: { success in
             if success {
-                if self.sut.getWordPairs(correctPercentage: 50.0).count > 0 {
+                if self.sut.getWordPairs(50.0).count > 0 {
                     exp.fulfill()
                 }
             }
@@ -83,7 +83,7 @@ class WordsProviderTests: XCTestCase {
         sut.fetchWords().subscribe(onSuccess: { success in
             if success {
                
-                if self.sut.getWordPairs(maxpairs: 5, correctPercentage: 50).count == 2 {
+                if self.sut.getWordPairs(5, 50.0).count == 2 {
                     exp.fulfill()
                 }
             }
@@ -101,7 +101,7 @@ class WordsProviderTests: XCTestCase {
         sut.fetchWords().subscribe(onSuccess: { success in
             if success {
                
-                if self.sut.getWordPairs(maxpairs: 3, correctPercentage: 50).count == 3 {
+                if self.sut.getWordPairs(3, 50.0).count == 3 {
                     exp.fulfill()
                 }
             }

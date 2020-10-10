@@ -18,6 +18,8 @@ internal enum L10n {
   internal static let correctButtonTitle = L10n.tr("Localizable", "correct_button_title")
   /// Oops!
   internal static let errorTitle = L10n.tr("Localizable", "error_title")
+  /// Game Over
+  internal static let gameOverLable = L10n.tr("Localizable", "game_over_lable")
   /// Lets Play
   internal static let playButtonTitle = L10n.tr("Localizable", "play_button_title")
   /// Word Game
@@ -26,6 +28,8 @@ internal enum L10n {
   internal static let splashScreenTitle = L10n.tr("Localizable", "splash_screen_title")
   /// Uanble to Start Game.
   internal static let unableToStartGameError = L10n.tr("Localizable", "unable_to_start_game_error")
+  /// Well Done!
+  internal static let wellDoneLable = L10n.tr("Localizable", "well_done_lable")
   /// Wrong Attempts: %d
   internal static func wrongAttemptsStatusLabel(_ p1: Int) -> String {
     return L10n.tr("Localizable", "wrong_attempts_status_label", p1)

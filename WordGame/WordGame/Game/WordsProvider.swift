@@ -11,8 +11,8 @@ import RxSwift
 //sourcery: AutoMockable
 protocol WordsProviderType {
     func fetchWords() -> Single<Bool>
-    func getWordPairs(correctPercentage: Double) -> [WordPair]
-    func getWordPairs(maxpairs: Int, correctPercentage: Double) -> [WordPair]
+    func getWordPairs(_ correctPercentage: Double) -> [WordPair]
+    func getWordPairs(_ maxpairs: Int, _ correctPercentage: Double) -> [WordPair]
 }
 
 class WordsProvider: WordsProviderType {
@@ -30,11 +30,11 @@ class WordsProvider: WordsProviderType {
         }
     }
     
-    func getWordPairs(correctPercentage: Double) -> [WordPair] {
-        getWordPairs(maxpairs: Int.max, correctPercentage: correctPercentage)
+    func getWordPairs(_ correctPercentage: Double) -> [WordPair] {
+        getWordPairs(Int.max, correctPercentage)
     }
     
-    func getWordPairs(maxpairs: Int, correctPercentage: Double) -> [WordPair] {
+    func getWordPairs(_ maxpairs: Int, _ correctPercentage: Double) -> [WordPair] {
         let suffeledWords = words.shuffled()
         let subSetLenght = suffeledWords.count > maxpairs ? maxpairs : suffeledWords.count
         let subSetWordPairs = suffeledWords.prefix(subSetLenght)

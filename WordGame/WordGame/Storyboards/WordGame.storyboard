@@ -11,7 +11,7 @@
         <!--Play Game View Controller-->
         <scene sceneID="3w3-3l-0mF">
             <objects>
-                <viewController storyboardIdentifier="PlayGameViewController" id="NbT-aB-in6" customClass="PlayGameViewController" customModule="WordGame" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="PlayGameViewController" id="NbT-aB-in6" customClass="PlayGameViewController" customModule="WordGame" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Ydz-Sw-vWC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -120,8 +120,49 @@
             </objects>
             <point key="canvasLocation" x="-184.05797101449278" y="-582.06521739130437"/>
         </scene>
+        <!--Game Over View Controller-->
+        <scene sceneID="0XB-ol-Ob2">
+            <objects>
+                <viewController storyboardIdentifier="GameOverViewController" id="Y8m-ih-CLE" customClass="GameOverViewController" customModule="WordGame" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="qHT-f7-YDa">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Sad" translatesAutoresizingMaskIntoConstraints="NO" id="8X4-UP-YHL">
+                                <rect key="frame" x="82" y="50" width="250" height="250"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="250" id="wJH-s1-5bw"/>
+                                    <constraint firstAttribute="height" constant="250" id="xlP-vX-gsG"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Game Over" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PMN-9q-NNx">
+                                <rect key="frame" x="116.00000000000001" y="350" width="182.33333333333337" height="42"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="35"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="h8H-75-8no"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="8X4-UP-YHL" firstAttribute="top" secondItem="h8H-75-8no" secondAttribute="top" constant="50" id="NZe-53-q2l"/>
+                            <constraint firstItem="PMN-9q-NNx" firstAttribute="centerX" secondItem="qHT-f7-YDa" secondAttribute="centerX" id="Zoh-vS-6Z9"/>
+                            <constraint firstItem="8X4-UP-YHL" firstAttribute="centerX" secondItem="qHT-f7-YDa" secondAttribute="centerX" id="r0x-3f-1AO"/>
+                            <constraint firstItem="PMN-9q-NNx" firstAttribute="top" secondItem="8X4-UP-YHL" secondAttribute="bottom" constant="50" id="r8E-G4-AGo"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="gamerOverLabel" destination="PMN-9q-NNx" id="eQB-6w-euC"/>
+                        <outlet property="imageView" destination="8X4-UP-YHL" id="khL-Sx-z5E"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="BEV-0d-cve" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1034.7826086956522" y="-584.51086956521749"/>
+        </scene>
     </scenes>
     <resources>
+        <image name="Sad" width="5556" height="5556"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

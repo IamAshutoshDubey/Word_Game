@@ -63,6 +63,12 @@ open class AppRouterTypeMock: AppRouterType, Mock {
 		perform?(`window`)
     }
 
+    open func naviagteToGameOverScreen(source: ViewControllerType, isGameOver: Bool) {
+        addInvocation(.m_naviagteToGameOverScreen__source_sourceisGameOver_isGameOver(Parameter<ViewControllerType>.value(`source`), Parameter<Bool>.value(`isGameOver`)))
+		let perform = methodPerformValue(.m_naviagteToGameOverScreen__source_sourceisGameOver_isGameOver(Parameter<ViewControllerType>.value(`source`), Parameter<Bool>.value(`isGameOver`))) as? (ViewControllerType, Bool) -> Void
+		perform?(`source`, `isGameOver`)
+    }
+
     open func push(view: ViewControllerType, on sender: ViewControllerType) {
         addInvocation(.m_push__view_viewon_sender(Parameter<ViewControllerType>.value(`view`), Parameter<ViewControllerType>.value(`sender`)))
 		let perform = methodPerformValue(.m_push__view_viewon_sender(Parameter<ViewControllerType>.value(`view`), Parameter<ViewControllerType>.value(`sender`))) as? (ViewControllerType, ViewControllerType) -> Void
@@ -78,6 +84,7 @@ open class AppRouterTypeMock: AppRouterType, Mock {
 
     fileprivate enum MethodType {
         case m_startJourney__window_window(Parameter<UIWindow>)
+        case m_naviagteToGameOverScreen__source_sourceisGameOver_isGameOver(Parameter<ViewControllerType>, Parameter<Bool>)
         case m_push__view_viewon_sender(Parameter<ViewControllerType>, Parameter<ViewControllerType>)
         case m_pop__view_view(Parameter<ViewControllerType>)
 
@@ -86,6 +93,12 @@ open class AppRouterTypeMock: AppRouterType, Mock {
             case (.m_startJourney__window_window(let lhsWindow), .m_startJourney__window_window(let rhsWindow)):
 				var results: [Matcher.ParameterComparisonResult] = []
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsWindow, rhs: rhsWindow, with: matcher), lhsWindow, rhsWindow, "window"))
+				return Matcher.ComparisonResult(results)
+
+            case (.m_naviagteToGameOverScreen__source_sourceisGameOver_isGameOver(let lhsSource, let lhsIsgameover), .m_naviagteToGameOverScreen__source_sourceisGameOver_isGameOver(let rhsSource, let rhsIsgameover)):
+				var results: [Matcher.ParameterComparisonResult] = []
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsSource, rhs: rhsSource, with: matcher), lhsSource, rhsSource, "source"))
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsIsgameover, rhs: rhsIsgameover, with: matcher), lhsIsgameover, rhsIsgameover, "isGameOver"))
 				return Matcher.ComparisonResult(results)
 
             case (.m_push__view_viewon_sender(let lhsView, let lhsSender), .m_push__view_viewon_sender(let rhsView, let rhsSender)):
@@ -105,6 +118,7 @@ open class AppRouterTypeMock: AppRouterType, Mock {
         func intValue() -> Int {
             switch self {
             case let .m_startJourney__window_window(p0): return p0.intValue
+            case let .m_naviagteToGameOverScreen__source_sourceisGameOver_isGameOver(p0, p1): return p0.intValue + p1.intValue
             case let .m_push__view_viewon_sender(p0, p1): return p0.intValue + p1.intValue
             case let .m_pop__view_view(p0): return p0.intValue
             }
@@ -112,6 +126,7 @@ open class AppRouterTypeMock: AppRouterType, Mock {
         func assertionName() -> String {
             switch self {
             case .m_startJourney__window_window: return ".startJourney(window:)"
+            case .m_naviagteToGameOverScreen__source_sourceisGameOver_isGameOver: return ".naviagteToGameOverScreen(source:isGameOver:)"
             case .m_push__view_viewon_sender: return ".push(view:on:)"
             case .m_pop__view_view: return ".pop(view:)"
             }
@@ -133,6 +148,7 @@ open class AppRouterTypeMock: AppRouterType, Mock {
         fileprivate var method: MethodType
 
         public static func startJourney(window: Parameter<UIWindow>) -> Verify { return Verify(method: .m_startJourney__window_window(`window`))}
+        public static func naviagteToGameOverScreen(source: Parameter<ViewControllerType>, isGameOver: Parameter<Bool>) -> Verify { return Verify(method: .m_naviagteToGameOverScreen__source_sourceisGameOver_isGameOver(`source`, `isGameOver`))}
         public static func push(view: Parameter<ViewControllerType>, on sender: Parameter<ViewControllerType>) -> Verify { return Verify(method: .m_push__view_viewon_sender(`view`, `sender`))}
         public static func pop(view: Parameter<ViewControllerType>) -> Verify { return Verify(method: .m_pop__view_view(`view`))}
     }
@@ -143,6 +159,9 @@ open class AppRouterTypeMock: AppRouterType, Mock {
 
         public static func startJourney(window: Parameter<UIWindow>, perform: @escaping (UIWindow) -> Void) -> Perform {
             return Perform(method: .m_startJourney__window_window(`window`), performs: perform)
+        }
+        public static func naviagteToGameOverScreen(source: Parameter<ViewControllerType>, isGameOver: Parameter<Bool>, perform: @escaping (ViewControllerType, Bool) -> Void) -> Perform {
+            return Perform(method: .m_naviagteToGameOverScreen__source_sourceisGameOver_isGameOver(`source`, `isGameOver`), performs: perform)
         }
         public static func push(view: Parameter<ViewControllerType>, on sender: Parameter<ViewControllerType>, perform: @escaping (ViewControllerType, ViewControllerType) -> Void) -> Perform {
             return Perform(method: .m_push__view_viewon_sender(`view`, `sender`), performs: perform)
@@ -278,55 +297,67 @@ open class GameTypeMock: GameType, Mock {
 	}
 	private var __p_userResponseObservable: (PublishSubject<UserResponse>)?
 
+    public var gameOverObservable: Observable<Bool> {
+		get {	invocations.append(.p_gameOverObservable_get); return __p_gameOverObservable ?? givenGetterValue(.p_gameOverObservable_get, "GameTypeMock - stub value for gameOverObservable was not defined") }
+	}
+	private var __p_gameOverObservable: (Observable<Bool>)?
 
 
 
 
-    open func startGame() -> Single<Void> {
-        addInvocation(.m_startGame)
-		let perform = methodPerformValue(.m_startGame) as? () -> Void
-		perform?()
+
+    open func startGame(_ mode: GameMode) -> Single<Void> {
+        addInvocation(.m_startGame__mode(Parameter<GameMode>.value(`mode`)))
+		let perform = methodPerformValue(.m_startGame__mode(Parameter<GameMode>.value(`mode`))) as? (GameMode) -> Void
+		perform?(`mode`)
 		var __value: Single<Void>
 		do {
-		    __value = try methodReturnValue(.m_startGame).casted()
+		    __value = try methodReturnValue(.m_startGame__mode(Parameter<GameMode>.value(`mode`))).casted()
 		} catch {
-			onFatalFailure("Stub return value not specified for startGame(). Use given")
-			Failure("Stub return value not specified for startGame(). Use given")
+			onFatalFailure("Stub return value not specified for startGame(_ mode: GameMode). Use given")
+			Failure("Stub return value not specified for startGame(_ mode: GameMode). Use given")
 		}
 		return __value
     }
 
 
     fileprivate enum MethodType {
-        case m_startGame
+        case m_startGame__mode(Parameter<GameMode>)
         case p_liveScoreObservable_get
         case p_questionObservable_get
         case p_userResponseObservable_get
+        case p_gameOverObservable_get
 
         static func compareParameters(lhs: MethodType, rhs: MethodType, matcher: Matcher) -> Matcher.ComparisonResult {
             switch (lhs, rhs) {
-            case (.m_startGame, .m_startGame): return .match
+            case (.m_startGame__mode(let lhsMode), .m_startGame__mode(let rhsMode)):
+				var results: [Matcher.ParameterComparisonResult] = []
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsMode, rhs: rhsMode, with: matcher), lhsMode, rhsMode, "_ mode"))
+				return Matcher.ComparisonResult(results)
             case (.p_liveScoreObservable_get,.p_liveScoreObservable_get): return Matcher.ComparisonResult.match
             case (.p_questionObservable_get,.p_questionObservable_get): return Matcher.ComparisonResult.match
             case (.p_userResponseObservable_get,.p_userResponseObservable_get): return Matcher.ComparisonResult.match
+            case (.p_gameOverObservable_get,.p_gameOverObservable_get): return Matcher.ComparisonResult.match
             default: return .none
             }
         }
 
         func intValue() -> Int {
             switch self {
-            case .m_startGame: return 0
+            case let .m_startGame__mode(p0): return p0.intValue
             case .p_liveScoreObservable_get: return 0
             case .p_questionObservable_get: return 0
             case .p_userResponseObservable_get: return 0
+            case .p_gameOverObservable_get: return 0
             }
         }
         func assertionName() -> String {
             switch self {
-            case .m_startGame: return ".startGame()"
+            case .m_startGame__mode: return ".startGame(_:)"
             case .p_liveScoreObservable_get: return "[get] .liveScoreObservable"
             case .p_questionObservable_get: return "[get] .questionObservable"
             case .p_userResponseObservable_get: return "[get] .userResponseObservable"
+            case .p_gameOverObservable_get: return "[get] .gameOverObservable"
             }
         }
     }
@@ -348,13 +379,16 @@ open class GameTypeMock: GameType, Mock {
         public static func userResponseObservable(getter defaultValue: PublishSubject<UserResponse>...) -> PropertyStub {
             return Given(method: .p_userResponseObservable_get, products: defaultValue.map({ StubProduct.return($0 as Any) }))
         }
-
-        public static func startGame(willReturn: Single<Void>...) -> MethodStub {
-            return Given(method: .m_startGame, products: willReturn.map({ StubProduct.return($0 as Any) }))
+        public static func gameOverObservable(getter defaultValue: Observable<Bool>...) -> PropertyStub {
+            return Given(method: .p_gameOverObservable_get, products: defaultValue.map({ StubProduct.return($0 as Any) }))
         }
-        public static func startGame(willProduce: (Stubber<Single<Void>>) -> Void) -> MethodStub {
+
+        public static func startGame(_ mode: Parameter<GameMode>, willReturn: Single<Void>...) -> MethodStub {
+            return Given(method: .m_startGame__mode(`mode`), products: willReturn.map({ StubProduct.return($0 as Any) }))
+        }
+        public static func startGame(_ mode: Parameter<GameMode>, willProduce: (Stubber<Single<Void>>) -> Void) -> MethodStub {
             let willReturn: [Single<Void>] = []
-			let given: Given = { return Given(method: .m_startGame, products: willReturn.map({ StubProduct.return($0 as Any) })) }()
+			let given: Given = { return Given(method: .m_startGame__mode(`mode`), products: willReturn.map({ StubProduct.return($0 as Any) })) }()
 			let stubber = given.stub(for: (Single<Void>).self)
 			willProduce(stubber)
 			return given
@@ -364,18 +398,19 @@ open class GameTypeMock: GameType, Mock {
     public struct Verify {
         fileprivate var method: MethodType
 
-        public static func startGame() -> Verify { return Verify(method: .m_startGame)}
+        public static func startGame(_ mode: Parameter<GameMode>) -> Verify { return Verify(method: .m_startGame__mode(`mode`))}
         public static var liveScoreObservable: Verify { return Verify(method: .p_liveScoreObservable_get) }
         public static var questionObservable: Verify { return Verify(method: .p_questionObservable_get) }
         public static var userResponseObservable: Verify { return Verify(method: .p_userResponseObservable_get) }
+        public static var gameOverObservable: Verify { return Verify(method: .p_gameOverObservable_get) }
     }
 
     public struct Perform {
         fileprivate var method: MethodType
         var performs: Any
 
-        public static func startGame(perform: @escaping () -> Void) -> Perform {
-            return Perform(method: .m_startGame, performs: perform)
+        public static func startGame(_ mode: Parameter<GameMode>, perform: @escaping (GameMode) -> Void) -> Perform {
+            return Perform(method: .m_startGame__mode(`mode`), performs: perform)
         }
     }
 
@@ -905,30 +940,30 @@ open class WordsProviderTypeMock: WordsProviderType, Mock {
 		return __value
     }
 
-    open func getWordPairs(correctPercentage: Double) -> [WordPair] {
-        addInvocation(.m_getWordPairs__correctPercentage_correctPercentage(Parameter<Double>.value(`correctPercentage`)))
-		let perform = methodPerformValue(.m_getWordPairs__correctPercentage_correctPercentage(Parameter<Double>.value(`correctPercentage`))) as? (Double) -> Void
+    open func getWordPairs(_ correctPercentage: Double) -> [WordPair] {
+        addInvocation(.m_getWordPairs__correctPercentage(Parameter<Double>.value(`correctPercentage`)))
+		let perform = methodPerformValue(.m_getWordPairs__correctPercentage(Parameter<Double>.value(`correctPercentage`))) as? (Double) -> Void
 		perform?(`correctPercentage`)
 		var __value: [WordPair]
 		do {
-		    __value = try methodReturnValue(.m_getWordPairs__correctPercentage_correctPercentage(Parameter<Double>.value(`correctPercentage`))).casted()
+		    __value = try methodReturnValue(.m_getWordPairs__correctPercentage(Parameter<Double>.value(`correctPercentage`))).casted()
 		} catch {
-			onFatalFailure("Stub return value not specified for getWordPairs(correctPercentage: Double). Use given")
-			Failure("Stub return value not specified for getWordPairs(correctPercentage: Double). Use given")
+			onFatalFailure("Stub return value not specified for getWordPairs(_ correctPercentage: Double). Use given")
+			Failure("Stub return value not specified for getWordPairs(_ correctPercentage: Double). Use given")
 		}
 		return __value
     }
 
-    open func getWordPairs(maxpairs: Int, correctPercentage: Double) -> [WordPair] {
-        addInvocation(.m_getWordPairs__maxpairs_maxpairscorrectPercentage_correctPercentage(Parameter<Int>.value(`maxpairs`), Parameter<Double>.value(`correctPercentage`)))
-		let perform = methodPerformValue(.m_getWordPairs__maxpairs_maxpairscorrectPercentage_correctPercentage(Parameter<Int>.value(`maxpairs`), Parameter<Double>.value(`correctPercentage`))) as? (Int, Double) -> Void
+    open func getWordPairs(_ maxpairs: Int, _ correctPercentage: Double) -> [WordPair] {
+        addInvocation(.m_getWordPairs__maxpairs_correctPercentage(Parameter<Int>.value(`maxpairs`), Parameter<Double>.value(`correctPercentage`)))
+		let perform = methodPerformValue(.m_getWordPairs__maxpairs_correctPercentage(Parameter<Int>.value(`maxpairs`), Parameter<Double>.value(`correctPercentage`))) as? (Int, Double) -> Void
 		perform?(`maxpairs`, `correctPercentage`)
 		var __value: [WordPair]
 		do {
-		    __value = try methodReturnValue(.m_getWordPairs__maxpairs_maxpairscorrectPercentage_correctPercentage(Parameter<Int>.value(`maxpairs`), Parameter<Double>.value(`correctPercentage`))).casted()
+		    __value = try methodReturnValue(.m_getWordPairs__maxpairs_correctPercentage(Parameter<Int>.value(`maxpairs`), Parameter<Double>.value(`correctPercentage`))).casted()
 		} catch {
-			onFatalFailure("Stub return value not specified for getWordPairs(maxpairs: Int, correctPercentage: Double). Use given")
-			Failure("Stub return value not specified for getWordPairs(maxpairs: Int, correctPercentage: Double). Use given")
+			onFatalFailure("Stub return value not specified for getWordPairs(_ maxpairs: Int, _ correctPercentage: Double). Use given")
+			Failure("Stub return value not specified for getWordPairs(_ maxpairs: Int, _ correctPercentage: Double). Use given")
 		}
 		return __value
     }
@@ -936,22 +971,22 @@ open class WordsProviderTypeMock: WordsProviderType, Mock {
 
     fileprivate enum MethodType {
         case m_fetchWords
-        case m_getWordPairs__correctPercentage_correctPercentage(Parameter<Double>)
-        case m_getWordPairs__maxpairs_maxpairscorrectPercentage_correctPercentage(Parameter<Int>, Parameter<Double>)
+        case m_getWordPairs__correctPercentage(Parameter<Double>)
+        case m_getWordPairs__maxpairs_correctPercentage(Parameter<Int>, Parameter<Double>)
 
         static func compareParameters(lhs: MethodType, rhs: MethodType, matcher: Matcher) -> Matcher.ComparisonResult {
             switch (lhs, rhs) {
             case (.m_fetchWords, .m_fetchWords): return .match
 
-            case (.m_getWordPairs__correctPercentage_correctPercentage(let lhsCorrectpercentage), .m_getWordPairs__correctPercentage_correctPercentage(let rhsCorrectpercentage)):
+            case (.m_getWordPairs__correctPercentage(let lhsCorrectpercentage), .m_getWordPairs__correctPercentage(let rhsCorrectpercentage)):
 				var results: [Matcher.ParameterComparisonResult] = []
-				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsCorrectpercentage, rhs: rhsCorrectpercentage, with: matcher), lhsCorrectpercentage, rhsCorrectpercentage, "correctPercentage"))
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsCorrectpercentage, rhs: rhsCorrectpercentage, with: matcher), lhsCorrectpercentage, rhsCorrectpercentage, "_ correctPercentage"))
 				return Matcher.ComparisonResult(results)
 
-            case (.m_getWordPairs__maxpairs_maxpairscorrectPercentage_correctPercentage(let lhsMaxpairs, let lhsCorrectpercentage), .m_getWordPairs__maxpairs_maxpairscorrectPercentage_correctPercentage(let rhsMaxpairs, let rhsCorrectpercentage)):
+            case (.m_getWordPairs__maxpairs_correctPercentage(let lhsMaxpairs, let lhsCorrectpercentage), .m_getWordPairs__maxpairs_correctPercentage(let rhsMaxpairs, let rhsCorrectpercentage)):
 				var results: [Matcher.ParameterComparisonResult] = []
-				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsMaxpairs, rhs: rhsMaxpairs, with: matcher), lhsMaxpairs, rhsMaxpairs, "maxpairs"))
-				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsCorrectpercentage, rhs: rhsCorrectpercentage, with: matcher), lhsCorrectpercentage, rhsCorrectpercentage, "correctPercentage"))
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsMaxpairs, rhs: rhsMaxpairs, with: matcher), lhsMaxpairs, rhsMaxpairs, "_ maxpairs"))
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsCorrectpercentage, rhs: rhsCorrectpercentage, with: matcher), lhsCorrectpercentage, rhsCorrectpercentage, "_ correctPercentage"))
 				return Matcher.ComparisonResult(results)
             default: return .none
             }
@@ -960,15 +995,15 @@ open class WordsProviderTypeMock: WordsProviderType, Mock {
         func intValue() -> Int {
             switch self {
             case .m_fetchWords: return 0
-            case let .m_getWordPairs__correctPercentage_correctPercentage(p0): return p0.intValue
-            case let .m_getWordPairs__maxpairs_maxpairscorrectPercentage_correctPercentage(p0, p1): return p0.intValue + p1.intValue
+            case let .m_getWordPairs__correctPercentage(p0): return p0.intValue
+            case let .m_getWordPairs__maxpairs_correctPercentage(p0, p1): return p0.intValue + p1.intValue
             }
         }
         func assertionName() -> String {
             switch self {
             case .m_fetchWords: return ".fetchWords()"
-            case .m_getWordPairs__correctPercentage_correctPercentage: return ".getWordPairs(correctPercentage:)"
-            case .m_getWordPairs__maxpairs_maxpairscorrectPercentage_correctPercentage: return ".getWordPairs(maxpairs:correctPercentage:)"
+            case .m_getWordPairs__correctPercentage: return ".getWordPairs(_:)"
+            case .m_getWordPairs__maxpairs_correctPercentage: return ".getWordPairs(_:_:)"
             }
         }
     }
@@ -985,11 +1020,11 @@ open class WordsProviderTypeMock: WordsProviderType, Mock {
         public static func fetchWords(willReturn: Single<Bool>...) -> MethodStub {
             return Given(method: .m_fetchWords, products: willReturn.map({ StubProduct.return($0 as Any) }))
         }
-        public static func getWordPairs(correctPercentage: Parameter<Double>, willReturn: [WordPair]...) -> MethodStub {
-            return Given(method: .m_getWordPairs__correctPercentage_correctPercentage(`correctPercentage`), products: willReturn.map({ StubProduct.return($0 as Any) }))
+        public static func getWordPairs(_ correctPercentage: Parameter<Double>, willReturn: [WordPair]...) -> MethodStub {
+            return Given(method: .m_getWordPairs__correctPercentage(`correctPercentage`), products: willReturn.map({ StubProduct.return($0 as Any) }))
         }
-        public static func getWordPairs(maxpairs: Parameter<Int>, correctPercentage: Parameter<Double>, willReturn: [WordPair]...) -> MethodStub {
-            return Given(method: .m_getWordPairs__maxpairs_maxpairscorrectPercentage_correctPercentage(`maxpairs`, `correctPercentage`), products: willReturn.map({ StubProduct.return($0 as Any) }))
+        public static func getWordPairs(_ maxpairs: Parameter<Int>, _ correctPercentage: Parameter<Double>, willReturn: [WordPair]...) -> MethodStub {
+            return Given(method: .m_getWordPairs__maxpairs_correctPercentage(`maxpairs`, `correctPercentage`), products: willReturn.map({ StubProduct.return($0 as Any) }))
         }
         public static func fetchWords(willProduce: (Stubber<Single<Bool>>) -> Void) -> MethodStub {
             let willReturn: [Single<Bool>] = []
@@ -998,16 +1033,16 @@ open class WordsProviderTypeMock: WordsProviderType, Mock {
 			willProduce(stubber)
 			return given
         }
-        public static func getWordPairs(correctPercentage: Parameter<Double>, willProduce: (Stubber<[WordPair]>) -> Void) -> MethodStub {
+        public static func getWordPairs(_ correctPercentage: Parameter<Double>, willProduce: (Stubber<[WordPair]>) -> Void) -> MethodStub {
             let willReturn: [[WordPair]] = []
-			let given: Given = { return Given(method: .m_getWordPairs__correctPercentage_correctPercentage(`correctPercentage`), products: willReturn.map({ StubProduct.return($0 as Any) })) }()
+			let given: Given = { return Given(method: .m_getWordPairs__correctPercentage(`correctPercentage`), products: willReturn.map({ StubProduct.return($0 as Any) })) }()
 			let stubber = given.stub(for: ([WordPair]).self)
 			willProduce(stubber)
 			return given
         }
-        public static func getWordPairs(maxpairs: Parameter<Int>, correctPercentage: Parameter<Double>, willProduce: (Stubber<[WordPair]>) -> Void) -> MethodStub {
+        public static func getWordPairs(_ maxpairs: Parameter<Int>, _ correctPercentage: Parameter<Double>, willProduce: (Stubber<[WordPair]>) -> Void) -> MethodStub {
             let willReturn: [[WordPair]] = []
-			let given: Given = { return Given(method: .m_getWordPairs__maxpairs_maxpairscorrectPercentage_correctPercentage(`maxpairs`, `correctPercentage`), products: willReturn.map({ StubProduct.return($0 as Any) })) }()
+			let given: Given = { return Given(method: .m_getWordPairs__maxpairs_correctPercentage(`maxpairs`, `correctPercentage`), products: willReturn.map({ StubProduct.return($0 as Any) })) }()
 			let stubber = given.stub(for: ([WordPair]).self)
 			willProduce(stubber)
 			return given
@@ -1018,8 +1053,8 @@ open class WordsProviderTypeMock: WordsProviderType, Mock {
         fileprivate var method: MethodType
 
         public static func fetchWords() -> Verify { return Verify(method: .m_fetchWords)}
-        public static func getWordPairs(correctPercentage: Parameter<Double>) -> Verify { return Verify(method: .m_getWordPairs__correctPercentage_correctPercentage(`correctPercentage`))}
-        public static func getWordPairs(maxpairs: Parameter<Int>, correctPercentage: Parameter<Double>) -> Verify { return Verify(method: .m_getWordPairs__maxpairs_maxpairscorrectPercentage_correctPercentage(`maxpairs`, `correctPercentage`))}
+        public static func getWordPairs(_ correctPercentage: Parameter<Double>) -> Verify { return Verify(method: .m_getWordPairs__correctPercentage(`correctPercentage`))}
+        public static func getWordPairs(_ maxpairs: Parameter<Int>, _ correctPercentage: Parameter<Double>) -> Verify { return Verify(method: .m_getWordPairs__maxpairs_correctPercentage(`maxpairs`, `correctPercentage`))}
     }
 
     public struct Perform {
@@ -1029,11 +1064,11 @@ open class WordsProviderTypeMock: WordsProviderType, Mock {
         public static func fetchWords(perform: @escaping () -> Void) -> Perform {
             return Perform(method: .m_fetchWords, performs: perform)
         }
-        public static func getWordPairs(correctPercentage: Parameter<Double>, perform: @escaping (Double) -> Void) -> Perform {
-            return Perform(method: .m_getWordPairs__correctPercentage_correctPercentage(`correctPercentage`), performs: perform)
+        public static func getWordPairs(_ correctPercentage: Parameter<Double>, perform: @escaping (Double) -> Void) -> Perform {
+            return Perform(method: .m_getWordPairs__correctPercentage(`correctPercentage`), performs: perform)
         }
-        public static func getWordPairs(maxpairs: Parameter<Int>, correctPercentage: Parameter<Double>, perform: @escaping (Int, Double) -> Void) -> Perform {
-            return Perform(method: .m_getWordPairs__maxpairs_maxpairscorrectPercentage_correctPercentage(`maxpairs`, `correctPercentage`), performs: perform)
+        public static func getWordPairs(_ maxpairs: Parameter<Int>, _ correctPercentage: Parameter<Double>, perform: @escaping (Int, Double) -> Void) -> Perform {
+            return Perform(method: .m_getWordPairs__maxpairs_correctPercentage(`maxpairs`, `correctPercentage`), performs: perform)
         }
     }
 
