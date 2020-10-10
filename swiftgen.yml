@@ -1,0 +1,9 @@
+input_dir: WordGame/WordGame/
+output_dir: WordGame/WordGame/
+strings:
+  inputs: Resources
+  filter: .+\.strings$
+  outputs:
+      templateName: structured-swift5
+      output: Resources/L10n.swift
+

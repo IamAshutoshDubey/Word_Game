@@ -1,0 +1,11 @@
+
+"splash_screen_title" = "Play With Words";
+"playGame_screen_title" = "Word Game";
+"correct_attempts_status_label" = "Correct Attempts: %d";
+"wrong_attempts_status_label" = "Wrong Attempts: %d";
+"correct_button_title" = "Correct";
+"wrong_button_title" = "Wrong";
+"error_title" = "Oops!";
+"unable_to_start_game_error" = "Uanble to Start Game.";
+
+

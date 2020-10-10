@@ -1,0 +1,15 @@
+sourceryCommand: null
+WordGameTests:
+  sources:
+    include:
+    - ./WordGame
+  output: ./WordGameTests/Mock.generated.swift
+  targets:
+  - WordGameTests
+  testable:
+  - WordGame
+  import:
+  - Swinject
+  - UIKit
+  - RxSwift
+  - RxRelay
