@@ -8,7 +8,7 @@ The user has to choose if the spanish word is the correct or wrong translation f
 MVVM with Coordinator (MVVM-C) has been used. 
 
 ## Dependencies
-- RxSwift, Swinject and SwiftyMocky is added using Swift Package Manager.
+- RxSwift, Swinject and SwiftyMocky Libraries are added using Swift Package Manager.
 
 ## Environment
 - iOS 13.0 and above
