@@ -19,8 +19,9 @@ class PlayGameViewController: UIViewController {
     
     @IBOutlet var correctButton: ActionButton!
     @IBOutlet var wrongButton: ActionButton!
+    @IBOutlet weak var playButton: ActionButton!
     
-    
+    @IBOutlet weak var loader: UIImageView!
     private let disposeBag = DisposeBag()
     var viewModel: PlayGameViewModel!
     
@@ -28,7 +29,6 @@ class PlayGameViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         setupBinding()
-        viewModel.startGame()
     }
     
     private func setupUI() {
@@ -45,12 +45,14 @@ class PlayGameViewController: UIViewController {
         
         correctButton.setTitle(L10n.correctButtonTitle, for: .normal)
         wrongButton.setTitle(L10n.wrongButtonTitle, for: .normal)
-
+        playButton.setTitle(L10n.playButtonTitle, for: .normal)
+        
+        startPlayMode(isPlay: false)
     }
     
     private func setupBinding() {
         
-        viewModel.setupBinding(correctTrigger: correctButton.rx.tap.asDriver(), wrongTrigger: wrongButton.rx.tap.asDriver())
+        viewModel.setupBinding(input: InputTrigger(correctTrigger: correctButton.rx.tap.asObservable(), wrongTrigger: wrongButton.rx.tap.asObservable(), playTrigger: playButton.rx.tap.asObservable()))
         
         viewModel.liveCorrectAttempts.distinctUntilChanged()
             .observeOn(MainScheduler.instance)
@@ -78,6 +80,14 @@ class PlayGameViewController: UIViewController {
         
         correctButton.rx.tap.map({false}).bind(to: correctButton.rx.isEnabled).disposed(by: disposeBag)
         wrongButton.rx.tap.map({false}).bind(to: wrongButton.rx.isEnabled).disposed(by: disposeBag)
+        
+        viewModel.gameStartSubject.subscribe(onNext: { [weak self] gameStarted in
+            if gameStarted {
+                self?.startPlayMode(isPlay: true)
+            } else {
+                self?.showAlert()
+            }
+        }).disposed(by: disposeBag)
     }
     
     private func animateAttemptOption() {
@@ -106,6 +116,23 @@ class PlayGameViewController: UIViewController {
         UIView.animate(withDuration: 0.2) {
             self.wrongAttmptsLabel.transform = .identity
         }
+    }
+    
+    private func startPlayMode(isPlay: Bool) {
+        correctButton.isHidden = !isPlay
+        wrongButton.isHidden = !isPlay
+        correctAttempsLabel.isHidden = !isPlay
+        wrongAttmptsLabel.isHidden = !isPlay
+        englishLabel.isHidden = !isPlay
+        translationLabel.isHidden = !isPlay
+        playButton.isHidden = isPlay
+    }
+    
+    
+    //MARK: Error Alert
+    private func showAlert() {
+        let alert = UIAlertController(title: L10n.errorTitle, message: L10n.unableToStartGameError, preferredStyle: .alert)
+        present(alert, animated: true, completion: nil)
     }
 }
 

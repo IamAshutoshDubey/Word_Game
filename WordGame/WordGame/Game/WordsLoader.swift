@@ -37,16 +37,3 @@ enum LoaderError: Error {
     case noElements
     case fileNotFound
 }
-
-extension LoaderError: LocalizedError {
-    public var errorDescription: String? {
-        switch self {
-        case .decoreError:
-            return "Could not decode json data."
-        case .noElements:
-            return "No elements available. Please add some words in the data source."
-        case .fileNotFound:
-            return "File not found. Please check your URL."
-        }
-    }
-}

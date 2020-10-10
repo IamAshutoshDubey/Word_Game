@@ -28,6 +28,13 @@
                                 <color key="textColor" red="0.59607843137254901" green="0.14901960784313725" blue="0.1764705882352941" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="zYK-9h-zZy">
+                                <rect key="frame" x="157" y="238" width="100" height="100"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="100" id="GlU-Bz-EwA"/>
+                                    <constraint firstAttribute="height" constant="100" id="f9R-Ca-pIY"/>
+                                </constraints>
+                            </imageView>
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="40" translatesAutoresizingMaskIntoConstraints="NO" id="t79-oD-jkF">
                                 <rect key="frame" x="20" y="636" width="374" height="50"/>
                                 <subviews>
@@ -48,6 +55,18 @@
                                     <constraint firstAttribute="height" constant="50" id="9Tf-d6-FWD"/>
                                 </constraints>
                             </stackView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UUS-kX-yeQ" customClass="ActionButton" customModule="WordGame" customModuleProvider="target">
+                                <rect key="frame" x="132" y="328" width="150" height="80"/>
+                                <color key="backgroundColor" red="0.73784914469999996" green="0.33226413770000002" blue="0.36585834319999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="80" id="9Wu-sI-an2"/>
+                                    <constraint firstAttribute="width" constant="150" id="sH6-zj-6E2"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-MediumItalic" family="Helvetica Neue" pointSize="25"/>
+                                <state key="normal" title="Lets Play">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                            </button>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="50" translatesAutoresizingMaskIntoConstraints="NO" id="m9n-wF-pVC">
                                 <rect key="frame" x="25" y="297.33333333333331" width="364" height="141.66666666666669"/>
                                 <subviews>
@@ -69,6 +88,9 @@
                         <viewLayoutGuide key="safeArea" id="hxk-X5-NvA"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="zYK-9h-zZy" firstAttribute="centerX" secondItem="Ydz-Sw-vWC" secondAttribute="centerX" id="5ic-ud-cGe"/>
+                            <constraint firstItem="UUS-kX-yeQ" firstAttribute="centerY" secondItem="Ydz-Sw-vWC" secondAttribute="centerY" id="Kdb-Nq-RO9"/>
+                            <constraint firstItem="UUS-kX-yeQ" firstAttribute="centerX" secondItem="Ydz-Sw-vWC" secondAttribute="centerX" id="N1H-Vi-3rs"/>
                             <constraint firstItem="nDC-ew-bok" firstAttribute="top" secondItem="GQp-xh-ye0" secondAttribute="bottom" constant="10" id="Qwb-X3-bBK"/>
                             <constraint firstItem="hxk-X5-NvA" firstAttribute="bottom" secondItem="t79-oD-jkF" secondAttribute="bottom" constant="50" id="T5X-QM-htf"/>
                             <constraint firstItem="hxk-X5-NvA" firstAttribute="trailing" secondItem="GQp-xh-ye0" secondAttribute="trailing" constant="20" id="VZF-P4-ify"/>
@@ -77,6 +99,7 @@
                             <constraint firstItem="m9n-wF-pVC" firstAttribute="centerY" secondItem="Ydz-Sw-vWC" secondAttribute="centerY" id="epa-Ku-ulB"/>
                             <constraint firstItem="hxk-X5-NvA" firstAttribute="trailing" secondItem="m9n-wF-pVC" secondAttribute="trailing" constant="25" id="izG-Mw-qMw"/>
                             <constraint firstItem="hxk-X5-NvA" firstAttribute="trailing" secondItem="nDC-ew-bok" secondAttribute="trailing" constant="20" id="nMM-Yg-ONa"/>
+                            <constraint firstItem="zYK-9h-zZy" firstAttribute="centerY" secondItem="Ydz-Sw-vWC" secondAttribute="centerY" constant="-80" id="pwr-jg-5oZ"/>
                             <constraint firstItem="m9n-wF-pVC" firstAttribute="leading" secondItem="hxk-X5-NvA" secondAttribute="leading" constant="25" id="qDB-m4-My1"/>
                             <constraint firstItem="t79-oD-jkF" firstAttribute="leading" secondItem="hxk-X5-NvA" secondAttribute="leading" constant="20" id="vqC-aM-qJa"/>
                         </constraints>
@@ -86,6 +109,8 @@
                         <outlet property="correctAttempsLabel" destination="GQp-xh-ye0" id="Vhc-tP-DME"/>
                         <outlet property="correctButton" destination="5vd-Eu-U2k" id="CgC-8T-R1S"/>
                         <outlet property="englishLabel" destination="QM5-hp-v8K" id="reC-TC-xwM"/>
+                        <outlet property="loader" destination="zYK-9h-zZy" id="WtG-YH-QbS"/>
+                        <outlet property="playButton" destination="UUS-kX-yeQ" id="ivG-Ky-JSc"/>
                         <outlet property="translationLabel" destination="Gwr-Lm-zku" id="1F7-NQ-Akk"/>
                         <outlet property="wrongAttmptsLabel" destination="nDC-ew-bok" id="eny-D8-MmN"/>
                         <outlet property="wrongButton" destination="kCd-YV-04f" id="DyO-JB-cfL"/>
@@ -93,7 +118,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HTO-Z9-awE" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-184" y="-582"/>
+            <point key="canvasLocation" x="-184.05797101449278" y="-582.06521739130437"/>
         </scene>
     </scenes>
     <resources>

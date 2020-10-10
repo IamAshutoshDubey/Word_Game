@@ -18,6 +18,8 @@ internal enum L10n {
   internal static let correctButtonTitle = L10n.tr("Localizable", "correct_button_title")
   /// Oops!
   internal static let errorTitle = L10n.tr("Localizable", "error_title")
+  /// Lets Play
+  internal static let playButtonTitle = L10n.tr("Localizable", "play_button_title")
   /// Word Game
   internal static let playGameScreenTitle = L10n.tr("Localizable", "playGame_screen_title")
   /// Play With Words

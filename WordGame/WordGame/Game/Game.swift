@@ -14,19 +14,24 @@ protocol GameType {
     var liveScoreObservable: Observable<LiveScore> {get}
     var questionObservable: Observable<AttemptQuestion?> {get}
     var userResponseObservable: PublishSubject<UserResponse> {get}
-    func startGame()
+    func startGame() -> Single<Void>
 }
 
 class Game: GameType {
-    private let disposeBag = DisposeBag()
-    private let liveScore = BehaviorRelay<LiveScore>(value: LiveScore(correctAttempts: 0, wrongAttempts: 0))
-    private let currentQuestion = BehaviorRelay<AttemptQuestion?>(value: nil)
-    private var allWordPair: [WordPair]!
-    private var currentWordPairCount = 0
-
+    
+    private let correctPercentage = 25
+    
     var liveScoreObservable: Observable<LiveScore> {liveScore.asObservable()}
     var questionObservable: Observable<AttemptQuestion?> {currentQuestion.asObservable()}
-    let userResponseObservable = PublishSubject<UserResponse>()
+    var userResponseObservable = PublishSubject<UserResponse>()
+    
+    private let liveScore = BehaviorRelay<LiveScore>(value: LiveScore(correctAttempts: 0, wrongAttempts: 0))
+    private let currentQuestion = BehaviorRelay<AttemptQuestion?>(value: nil)
+    private let startGameSubject = PublishSubject<Bool>()
+    private var allWordPair: [WordPair]!
+    private var currentWordPairCount = 0
+    
+    private let disposeBag = DisposeBag()
     
     private let wordsProvider: WordsProviderType
     
@@ -34,14 +39,14 @@ class Game: GameType {
         self.wordsProvider = wordsProvider
     }
     
-    
-    func startGame() {
-        wordsProvider.fetchWords().subscribe(onSuccess: { [weak self] attempts in
+    func startGame() -> Single<Void> {
+        return wordsProvider.fetchWords().subscribeOn(ConcurrentDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .flatMap { [weak self] success -> Single<Void> in
             self?.allWordPair = self?.wordsProvider.getWordPairs(correctPercentage: 25)
             self?.play()
-        }, onError: { _ in
-            //TODO:
-        }).disposed(by: disposeBag)
+            return Single.just(())
+        }
     }
     
     private func play() {
