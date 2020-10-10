@@ -91,10 +91,8 @@ class PlayGameViewController: UIViewController {
     }
     
     private func animateAttemptOption() {
-        englishLabel.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
         translationLabel.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
         UIView.animate(withDuration: 0.4) {
-            self.englishLabel.transform = .identity
             self.translationLabel.transform = .identity
         } completion: { completed in
             if completed {

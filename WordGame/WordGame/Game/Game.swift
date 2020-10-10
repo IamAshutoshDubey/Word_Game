@@ -97,8 +97,10 @@ class Game: GameType {
             DispatchQueue.main.async {
                 self.timer?.invalidate()
                 self.timer = Timer(timeInterval: self.timeoutTime, repeats: false) { [weak self] _ in
-                    self?.userResponseObservable.dispose()
-                    self?.gameOverSubject.onNext((true))
+                    guard let weakSelf = self else { return }
+                    var score = weakSelf.liveScore.value
+                    score.wrongAttempts += 1
+                    weakSelf.processLiveScore(score: score)
                 }
                 RunLoop.current.add(self.timer, forMode: RunLoop.Mode.common)
             }
